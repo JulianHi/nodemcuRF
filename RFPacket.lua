@@ -1,21 +1,17 @@
-local RFPacket = {}  
+RFPacket = {}  
 RFPacket.__index = RFPacket -- failed table lookups on the instances should fallback to the class table, to get methods
 
-local RFPacket.MAX_BUFFER_SIZE = 256
 
--- vermutlich keine verwendung... erstmal
---RFReceiver*	RFReceiver::pInstance = NULL;
 
--- constructor
-setmetatable(RFPacket, {
-  __call = function (cls, ...)
-    return cls.init(...)
-  end,
-})
-
-function RFPacket:init()
-
-	reset();
+function RFPacket.init()
+	local pak = {}
+	setmetatable(pak,RFPacket)
+	pak:reset()
+	pak.MAX_BUFFER_SIZE = 256
+	--self.m_Buffer = {}
+	--self.m_nPosition = 0
+	--self.m_nSize = 0
+	return pak
 end
 
 function RFPacket:append(nValue)
@@ -42,7 +38,9 @@ function RFPacket:getSize()
 end
 
 function RFPacket:reset()
-	
+	print("reset")
+	self.m_Buffer = nil
+	collectgarbage()
 	self.m_Buffer = {}
 	self.m_nPosition = 0
 	self.m_nSize = 0
@@ -55,14 +53,16 @@ end
 
 function RFPacket:hasNext()
 
-	return (m_nPosition < m_nSize);
+	return (self.m_nPosition < self.m_nSize)
 end
 
 function RFPacket:next()
-	
-	self.m_nPosition = self.m_nPosition+1
-
-	return m_Buffer[m_nPosition-1]
+	if self:hasNext() then
+		self.m_nPosition = self.m_nPosition+1
+		return self.m_Buffer[self.m_nPosition-1]
+	else
+		return 0
+	end
 end
 
 function RFPacket:get(nIndex)
@@ -83,7 +83,7 @@ function RFPacket:print()
 	-- /*if(m_nSize != 50)
 	-- 	return;*/
 
-	for i = 0, m_nSize do
-		print(i..": "..m_Buffer[i])
+	for i = 0, self.m_nSize-1 do
+		print(i..": "..self.m_Buffer[i])
 	end
 end
