@@ -1,17 +1,14 @@
 require "RFPacket"
-
-
 Decoder_bOutDProtocol = {}
-Decoder_bOutDProtocol.__index = Decoder_bOutDProtocol
 
+function Decoder_bOutDProtocol:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
 
-function Decoder_bOutDProtocol.init()
-	local deco = {}
-	setmetatable(deco, Decoder_bOutDProtocol)
-	deco.m_nPulseLength = 0
-	return deco
+	self.m_nPulseLength = 0
+	return o
 end
-
 
 
 function Decoder_bOutDProtocol:decode(pPacket)

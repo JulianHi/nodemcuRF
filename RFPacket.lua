@@ -1,17 +1,16 @@
-RFPacket = {}  
-RFPacket.__index = RFPacket -- failed table lookups on the instances should fallback to the class table, to get methods
+RFPacket = {m_Buffer = {}, MAX_BUFFER_SIZE = 256}  
 
-
-
-function RFPacket.init()
-	local pak = {}
-	setmetatable(pak, RFPacket)
+function RFPacket:init(o)
+	o = o or {}
+	setmetatable(o, self) 
+	self.__index = self
 	
-	pak.m_Buffer = {} --init m_Buffer
-	pak:reset() -- initial reset
-	pak.MAX_BUFFER_SIZE = 256
 	
-	return pak
+	self.m_Buffer = {} --init m_Buffer
+	self:reset() -- initial reset
+	self.MAX_BUFFER_SIZE = 256
+	
+	return o
 end
 
 function RFPacket:append(nValue)

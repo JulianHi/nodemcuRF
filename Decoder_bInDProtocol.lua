@@ -1,15 +1,15 @@
 require "RFPacket"
-
-
 Decoder_bInDProtocol = {}
-Decoder_bInDProtocol.__index = Decoder_bInDProtocol
 
 
-function Decoder_bInDProtocol.init()
-	local deco = {}
-	setmetatable(deco, Decoder_bInDProtocol)
-	deco.m_nPulseLength = 0
-	return deco
+function Decoder_bInDProtocol:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+
+	self.m_nPulseLength = 0
+
+	return o
 end
 
 

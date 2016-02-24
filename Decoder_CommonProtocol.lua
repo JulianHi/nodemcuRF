@@ -1,15 +1,14 @@
 require "RFPacket"
-
-
 Decoder_CommonProtocol = {}
-Decoder_CommonProtocol.__index = Decoder_CommonProtocol
 
+function Decoder_CommonProtocol:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
 
-function Decoder_CommonProtocol.init()
-	local deco = {}
-	setmetatable(deco, Decoder_CommonProtocol)
-	deco.m_nPulseLength = 0
-	return deco
+	self.m_nPulseLength = 0
+
+	return o
 end
 
 

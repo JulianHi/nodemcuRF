@@ -1,15 +1,14 @@
 require "RFPacket"
 
-
 Decoder_WT450Protocol = {}
-Decoder_WT450Protocol.__index = Decoder_WT450Protocol
 
+function Decoder_WT450Protocol:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
 
-function Decoder_WT450Protocol.init()
-	local deco = {}
-	setmetatable(deco, Decoder_WT450Protocol)
-	deco.m_nPulseLength = 0
-	return deco
+	self.m_nPulseLength = 0
+	return o
 end
 
 

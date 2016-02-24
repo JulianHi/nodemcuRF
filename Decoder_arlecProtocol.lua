@@ -1,15 +1,17 @@
 require "RFPacket"
 
 Decoder_arlecProtocol = {}
-Decoder_arlecProtocol.__index = Decoder_arlecProtocol
 
 
-function Decoder_arlecProtocol.init()
-	local deco = {}
-	setmetatable(deco, Decoder_arlecProtocol)
-	deco.m_nPulseLength = 0
-	return deco
+function Decoder_arlecProtocol:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+
+	self.m_nPulseLength = 0
+	return o
 end
+
 
 function Decoder_arlecProtocol:decode(pPacket)
 

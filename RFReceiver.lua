@@ -1,34 +1,29 @@
 require "RFPacket"
 
-RFReceiver = {}  
-RFReceiver.__index = RFReceiver -- failed table lookups on the instances should fallback to the class table, to get methods
-
-local instance=nil
-
--- function RFReceiver.init()
--- 	local rec = {}
--- 	setmetatable(rec,RFReceiver)
--- 	rec.m_PacketReceive = RFPacket.init()
--- 	rec.m_bCapture = false
--- 	rec.m_bDataAvailable = false
--- 	instance=rec
--- 	return rec
--- end
+RFReceiver = {m_PacketReceive = nil, m_bCapture=false, m_bDataAvailable=false}  
 
 
-function RFReceiver.init()
-	instance = {}
-	setmetatable(instance, RFReceiver)
-	instance.m_PacketReceive = RFPacket.init()
-	instance.m_bCapture = false
-	instance.m_bDataAvailable = false
-	return instance
+function RFReceiver:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
+	o.m_PacketReceive = RFPacket:init()
+	o.m_bCapture = false
+	o.m_bDataAvailable = false
+	return o
 end
-
 
 function RFReceiver:start(pin)
 	self:purge()
 	self.nReceiverInterrupt = pin
+	
+	function handleInterrupt()
+		--if RFReceiverInstance ~= nil then
+			self:onInterrupt()
+			--end
+	end
+	
+	
 	gpio.mode(self.nReceiverInterrupt, gpio.INT)
 	gpio.trig(self.nReceiverInterrupt, "both", handleInterrupt)
 end
@@ -37,14 +32,14 @@ function RFReceiver:stop()
 
 	if self.nReceiverInterrupt then
 		gipo.mode(self.nReceiverInterrupt, gpio.FLOAT)
-		self.nReceiverInterrupt = nil;
+		self.nReceiverInterrupt = nil
 	end
 end
 
 function RFReceiver:purge()
-	self.m_PacketReceive:reset();
-	self.m_bCapture = false;
-	self.m_bDataAvailable = false;
+	self.m_PacketReceive:reset()
+	self.m_bCapture = false
+	self.m_bDataAvailable = false
 end
 
 function RFReceiver:getPacket()
@@ -52,26 +47,12 @@ function RFReceiver:getPacket()
 	if (self.m_bDataAvailable ~= true) then
 		return nil
 	end
-	
-	-- get copy
-	local packet = self.m_PacketReceive
-	
-	-- ready for new interrupts
-	self.purge()
-	
-	-- return local packet
-	return packet
+		
+	return self.m_PacketReceive
 end
 
-function handleInterrupt()
-	if instance ~= nil then
-		instance:onInterrupt()
-	end
-end
 
 function RFReceiver:onInterrupt()
-
-
 	
 	-- Data available and not processed, drop new data
 	if(self.m_bDataAvailable) then

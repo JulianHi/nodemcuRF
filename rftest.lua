@@ -1,6 +1,6 @@
 require("RFManager")  
 
-local mymanager = RFManager.init()
+local mymanager = RFManager:init(nil)
 mymanager:setup(4) 
 
 local function test()

@@ -1,15 +1,14 @@
 require "RFPacket"
-
-
 Decoder_HE330v2Protocol = {}
-Decoder_HE330v2Protocol.__index = Decoder_HE330v2Protocol
 
+function Decoder_HE330v2Protocol:init(o)
+	o = o or {}
+	setmetatable(o, self)
+	self.__index = self
 
-function Decoder_HE330v2Protocol.init()
-	local deco = {}
-	setmetatable(deco, Decoder_HE330v2Protocol)
-	deco.m_nPulseLength = 0
-	return deco
+	self.m_nPulseLength = 0
+
+	return o
 end
 
 

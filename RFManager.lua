@@ -8,22 +8,16 @@ require "Decoder_HE330v2Protocol"
 require "Decoder_WT450Protocol"
 
 
-RFManager = {}
-RFManager.__index = RFManager
+RFManager = {m_Receiver = nil}
+--RFManager.__index = RFManager
 
 
--- constructor
---setmetatable(RFManager, {
---  __call = function (cls, ...)
---    return cls:init(...)
---  end,
---})
-
-function RFManager.init()
-	local man = {}
-	setmetatable(man,RFManager) 
-	man.m_Receiver = RFReceiver.init()
-	return man
+function RFManager:init(o)
+	o = o or {}
+	setmetatable(o, self) 
+	self.__index = self
+	self.m_Receiver = RFReceiver:init(nil)
+	return o
 end
 
 
@@ -39,6 +33,7 @@ end
 function RFManager:check()
 		
 	local pReceivedPacket = self.m_Receiver:getPacket()
+	
 
 	--TODO: move this to decoder..
 	-- Check for unhandled RF data first
@@ -52,9 +47,9 @@ function RFManager:check()
 	
 			print("huhu: "..package.data.." encoding: "..package.encoding)
 		end
-		-- there is no further need, bechause we worked on a copy of the received packet
+		
 		-- Purge 
-		--self.m_Receiver:purge()
+		self.m_Receiver:purge()
 	end
 
 end
@@ -88,20 +83,20 @@ end
 function RFManager:createDecoder(index)
 
 	if index == 1 then
-		return Decoder_CommonProtocol.init()
+		return Decoder_CommonProtocol:init(nil)
 	elseif index == 2 then
-		return Decoder_WT450Protocol.init()
+		return Decoder_WT450Protocol:init(nil)
 	elseif index == 3 then
-		return Decoder_arlecProtocol.init()
+		return Decoder_arlecProtocol:init(nil)
 	elseif index == 4 then
-		return Decoder_HE330v2Protocol.init()
+		return Decoder_HE330v2Protocol:init(nil)
 	elseif index == 5 then
 		return nil
 		 --return OSv2ProtocolDecoder.init()
 	elseif index == 6 then	
-		return Decoder_bInDProtocol.init()
+		return Decoder_bInDProtocol:init(nil)
 	elseif index == 7 then	
-		return Decoder_bOutDProtocol.init()
+		return Decoder_bOutDProtocol:init(nil)
 	else
 		return nil
 	end
