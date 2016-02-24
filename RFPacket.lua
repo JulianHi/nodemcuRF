@@ -5,12 +5,12 @@ RFPacket.__index = RFPacket -- failed table lookups on the instances should fall
 
 function RFPacket.init()
 	local pak = {}
-	setmetatable(pak,RFPacket)
-	pak:reset()
+	setmetatable(pak, RFPacket)
+	
+	pak.m_Buffer = {} --init m_Buffer
+	pak:reset() -- initial reset
 	pak.MAX_BUFFER_SIZE = 256
-	--self.m_Buffer = {}
-	--self.m_nPosition = 0
-	--self.m_nSize = 0
+	
 	return pak
 end
 
@@ -39,20 +39,20 @@ end
 
 function RFPacket:reset()
 	print("reset")
-	self.m_Buffer = nil
-	collectgarbage()
-	self.m_Buffer = {}
+	
+	-- IMO there is no need to free m_Buffer
+	--self.m_Buffer = nil
+	--collectgarbage()
+	--self.m_Buffer = {}
 	self.m_nPosition = 0
 	self.m_nSize = 0
 end
 
 function RFPacket:rewind()
-
 	self.m_nPosition = 0
 end
 
 function RFPacket:hasNext()
-
 	return (self.m_nPosition < self.m_nSize)
 end
 
@@ -66,12 +66,10 @@ function RFPacket:next()
 end
 
 function RFPacket:get(nIndex)
-
 	return self.m_Buffer[nIndex]
 end
 
 function RFPacket:set(nIndex, nValue)
-
 	self.m_Buffer[nIndex] = nValue
 end
 

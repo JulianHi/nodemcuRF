@@ -5,26 +5,30 @@ RFReceiver.__index = RFReceiver -- failed table lookups on the instances should 
 
 local instance=nil
 
+-- function RFReceiver.init()
+-- 	local rec = {}
+-- 	setmetatable(rec,RFReceiver)
+-- 	rec.m_PacketReceive = RFPacket.init()
+-- 	rec.m_bCapture = false
+-- 	rec.m_bDataAvailable = false
+-- 	instance=rec
+-- 	return rec
+-- end
+
+
 function RFReceiver.init()
-	local rec = {}
-	setmetatable(rec,RFReceiver)
-	rec.m_PacketReceive = RFPacket.init()
-	rec.m_bCapture = false
-	rec.m_bDataAvailable = false
-	instance=rec
-	return rec
+	instance = {}
+	setmetatable(instance, RFReceiver)
+	instance.m_PacketReceive = RFPacket.init()
+	instance.m_bCapture = false
+	instance.m_bDataAvailable = false
+	return instance
 end
 
+
 function RFReceiver:start(pin)
-
-	--pInstance = this;
-
 	self:purge()
-
-	--attachInterrupt(0, onInterrupt, CHANGE);
-	
 	self.nReceiverInterrupt = pin
-	
 	gpio.mode(self.nReceiverInterrupt, gpio.INT)
 	gpio.trig(self.nReceiverInterrupt, "both", handleInterrupt)
 end
@@ -32,11 +36,9 @@ end
 function RFReceiver:stop()
 
 	if self.nReceiverInterrupt then
-		
 		gipo.mode(self.nReceiverInterrupt, gpio.FLOAT)
 		self.nReceiverInterrupt = nil;
 	end
-
 end
 
 function RFReceiver:purge()
@@ -50,8 +52,15 @@ function RFReceiver:getPacket()
 	if (self.m_bDataAvailable ~= true) then
 		return nil
 	end
-
-	return self.m_PacketReceive
+	
+	-- get copy
+	local packet = self.m_PacketReceive
+	
+	-- ready for new interrupts
+	self.purge()
+	
+	-- return local packet
+	return packet
 end
 
 function handleInterrupt()

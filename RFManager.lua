@@ -37,9 +37,7 @@ function RFManager:setup(pin)
 end
 
 function RFManager:check()
-	
-	
-	
+		
 	local pReceivedPacket = self.m_Receiver:getPacket()
 
 	--TODO: move this to decoder..
@@ -48,14 +46,15 @@ function RFManager:check()
 		print("check")
 		pReceivedPacket:print()
 	
-		package = self:getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatManagedToDecodeThePacketIfItExists(pReceivedPacket);
+		local package = self:getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatManagedToDecodeThePacketIfItExists(pReceivedPacket);
 
 		if (package ~= nil) then
 	
 			print("huhu: "..package.data.." encoding: "..package.encoding)
 		end
+		-- there is no further need, bechause we worked on a copy of the received packet
 		-- Purge 
-		self.m_Receiver:purge()
+		--self.m_Receiver:purge()
 	end
 
 end
@@ -77,6 +76,7 @@ function RFManager:getEachDecoderToAttemptToDecodeThePacketAndGetDecoderThatMana
 
 		if (canDecoderDecodeThePacket) then
 			result = decoder:fillPacket()
+			print("huhu: "..result.data.." encoding: "..result.encoding)
 		else 
 			packet:rewind()
 		end
@@ -107,62 +107,3 @@ function RFManager:createDecoder(index)
 	end
 	
 end
-
-
--- function RFManager:handle(NinjaPacket* pPacket)
--- {
--- 	if (pPacket->getGuid() != 0) { //TODO: extract constant..
--- 		return;
--- 	}
---
--- 	if(pPacket->getDevice() == ID_STATUS_LED)
--- 		leds.setStatColor(pPacket->getData());
--- 	else if(pPacket->getDevice() == ID_NINJA_EYES)
--- 		leds.setEyesColor(pPacket->getData());
--- 	else if(pPacket->getDevice() == ID_ONBOARD_RF)
--- 	{
--- 		m_Receiver.stop();
---
--- 		char encoding = pPacket->getEncoding();
---
--- 		//TODO: add support for OSv2ProtocolEncoder...
--- 		//TODO: reduce duplication between OSv2ProtocolEncoder and CommonProtocolEncoder e.g. make CommonProtocolEncoder more general..l
--- 		switch (encoding)
--- 		{
--- 			case ENCODING_COMMON:
--- 				m_encoder = new CommonProtocolEncoder(pPacket->getTiming());
--- 				break;
--- 			case ENCODING_ARLEC:
--- 				m_encoder = new arlecProtocolEncoder(pPacket->getTiming());
--- 				break;
--- 			case ENCODING_HE330:
--- 				m_encoder = new HE330v2ProtocolEncoder(pPacket->getTiming());
--- 				break;
--- 			case ENCODING_OSV2:
--- 				m_encoder = new OSv2ProtocolEncoder(pPacket->getTiming());
--- 				break;
--- 			case ENCODING_BIND:
--- 				m_encoder = new bInDProtocolEncoder(pPacket->getTiming());
--- 				break;
--- 			case ENCODING_BOUTD:
--- 				m_encoder = new bOutDProtocolEncoder(pPacket->getTiming());
--- 				break;
--- 		}
---
--- 		if(pPacket->isDataInArray())
--- 			m_encoder->setCode(pPacket->getDataArray(), pPacket->getArraySize());
--- 		else
--- 			m_encoder->setCode(pPacket->getData());
---
--- 		//m_encoder->setCode(pPacket->getData());
---
--- 		m_encoder->encode(&m_PacketTransmit);
---
--- 		m_Transmitter.send(&m_PacketTransmit, 5);
--- 		delete m_encoder;
--- 		m_Receiver.start();
--- 	}
---
--- 	pPacket->setType(TYPE_ACK);
--- 	pPacket->printToSerial();
--- }
